@@ -56,7 +56,7 @@ PFNKTXITERCB :: proc(
 	pixels: rawptr,
 	userdata: rawptr,
 )
-
+@(link_prefix = "ktx")
 foreign ktx {
 	Texture_CreateFromNamedFile :: proc(filename: cstring, createFlags: TextureCreateFlags, newTex: ^^Texture) -> error_code ---
 	Texture_CreateFromMemory :: proc(bytes: [^]u8, size: c.size_t, createFlags: TextureCreateFlags, newTex: ^^Texture) -> error_code ---
