@@ -65,6 +65,33 @@ PFNKTEXSETIMAGEFROMMEMORY :: proc(
 	srcSize: c.size_t,
 ) -> error_code
 
+PFNKTEXDESTROY :: proc(This: ^Texture)
+
+PFNKTEXGETIMAGEOFFSET :: proc(
+	This: ^Texture,
+	level: u32,
+	layer: u32,
+	faceSlice: u32,
+	pOffset: ^c.size_t,
+) -> error_code
+
+PFNKTEXGETDATASIZEUNCOMPRESSED :: proc(This: ^Texture) -> c.size_t
+PFNKTEXGETIMAGESIZE :: proc(This: ^Texture, level: u32) -> c.size_t
+PFNKTEXITERATELEVELS :: proc(This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code
+
+
+PFNKTEXITERATELOADLEVELFACES :: proc(
+	This: ^Texture,
+	iterCb: PFNKTXITERCB,
+	userdata: rawptr,
+) -> error_code
+
+PFNKTEXLOADIMAGEDATA :: proc(This: ^Texture, pBuffer: [^]u8, bufSize: c.size_t) -> error_code
+PFNKTEXNEEDSTRANSCODING :: proc(This: ^Texture) -> b32
+PFNKTEXWRITETONAMEDFILE :: proc(This: ^Texture, dstname: cstring) -> error_code
+PFNKTEXWRITETOMEMORY :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) -> error_code
+PFNKTEXWRITETOSTREAM :: proc(This: ^Texture, dststr: ^Stream) -> error_code
+
 
 Texture_SetImageFromMemory :: proc(
 	This: ^Texture,
@@ -75,6 +102,14 @@ Texture_SetImageFromMemory :: proc(
 	srcSize: c.size_t,
 ) -> error_code {
 	return This.vtbl.SetImageFromMemory(This, level, layer, faceSlice, src, srcSize)
+}
+
+Texture_WriteToNamedFile :: proc(This: ^Texture, dstname: cstring) -> error_code {
+	return This.vtbl.WriteToNamedFile(This, dstname)
+}
+
+Texture_WriteToMemory :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) -> error_code {
+	return This.vtbl.WriteToMemory(This, bytes, size)
 }
 
 @(link_prefix = "ktx")

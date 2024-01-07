@@ -32,20 +32,20 @@ TEXTURECLASSDEFN :: struct {
 }
 
 Texture_vtbl :: struct {
-	Destroy:                 rawptr,
-	GetImageOffset:          rawptr,
-	GetDataSizeUncompressed: rawptr,
-	GetImageSize:            rawptr,
-	IterateLevels:           rawptr,
-	IterateLoadLevelFaces:   rawptr,
-	NeedsTranscoding:        rawptr,
-	LoadImageData:           rawptr,
+	Destroy:                 PFNKTEXDESTROY,
+	GetImageOffset:          PFNKTEXGETIMAGEOFFSET,
+	GetDataSizeUncompressed: PFNKTEXGETDATASIZEUNCOMPRESSED,
+	GetImageSize:            PFNKTEXGETIMAGESIZE,
+	IterateLevels:           PFNKTEXITERATELEVELS,
+	IterateLoadLevelFaces:   PFNKTEXITERATELOADLEVELFACES,
+	NeedsTranscoding:        PFNKTEXNEEDSTRANSCODING,
+	LoadImageData:           PFNKTEXLOADIMAGEDATA,
 	SetImageFromMemory:      PFNKTEXSETIMAGEFROMMEMORY,
 	SetImageFromStdioStream: rawptr,
 	WriteToStdioStream:      rawptr,
-	WriteToNamedFile:        rawptr,
-	WriteToMemory:           rawptr,
-	WriteToStream:           rawptr,
+	WriteToNamedFile:        PFNKTEXWRITETONAMEDFILE,
+	WriteToMemory:           PFNKTEXWRITETOMEMORY,
+	WriteToStream:           PFNKTEXWRITETOSTREAM,
 }
 
 
