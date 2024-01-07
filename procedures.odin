@@ -111,6 +111,10 @@ Texture_WriteToMemory :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) ->
 	return This.vtbl.WriteToMemory(This, bytes, size)
 }
 
+Texture_WriteToStream :: proc(This: ^Texture, dststr: ^Stream) -> error_code {
+	return This.vtbl.WriteToStream(This, dststr)
+}
+
 @(link_prefix = "ktx")
 foreign ktx {
 	Texture_CreateFromNamedFile :: proc(filename: cstring, createFlags: TextureCreateFlags, newTex: ^^Texture) -> error_code ---

@@ -7,31 +7,6 @@ import "vendor:vulkan"
 HashList :: distinct c.size_t
 HashListEntry :: distinct c.size_t
 
-
-TEXTURECLASSDEFN :: struct {
-	class_id:        class_id,
-	vtbl:            ^Texture_vtbl,
-	vvtbl:           rawptr,
-	_protected:      rawptr,
-	isArray:         b32,
-	isCubemap:       b32,
-	isCompressed:    b32,
-	generateMipmaps: b32,
-	baseWidth:       u32,
-	baseHeight:      u32,
-	baseDepth:       u32,
-	numDimensions:   u32,
-	numLevels:       u32,
-	numLayers:       u32,
-	numFaces:        u32,
-	orientation:     Orientation,
-	kvDataHead:      HashList,
-	kvDataLen:       u32,
-	kvData:          [^]u8,
-	dataSize:        c.size_t,
-	pData:           [^]u8,
-}
-
 Texture_vtbl :: struct {
 	Destroy:                 PFNKTEXDESTROY,
 	GetImageOffset:          PFNKTEXGETIMAGEOFFSET,
@@ -65,7 +40,27 @@ Orientation :: struct {
  * functions and these fields should be considered read-only.
  */
 Texture :: struct {
-	using _: TEXTURECLASSDEFN,
+	class_id:        class_id,
+	vtbl:            ^Texture_vtbl,
+	vvtbl:           rawptr,
+	_protected:      rawptr,
+	isArray:         b32,
+	isCubemap:       b32,
+	isCompressed:    b32,
+	generateMipmaps: b32,
+	baseWidth:       u32,
+	baseHeight:      u32,
+	baseDepth:       u32,
+	numDimensions:   u32,
+	numLevels:       u32,
+	numLayers:       u32,
+	numFaces:        u32,
+	orientation:     Orientation,
+	kvDataHead:      HashList,
+	kvDataLen:       u32,
+	kvData:          [^]u8,
+	dataSize:        c.size_t,
+	pData:           [^]u8,
 }
 
 
@@ -77,7 +72,7 @@ Texture :: struct {
  * functions and these fields should be considered read-only.
  */
 Texture1 :: struct {
-	using _:              TEXTURECLASSDEFN,
+	using _:              Texture,
 	glFormat:             u32, // Format of the texture data, e.g., GL_RGB. 
 	glInternalformat:     u32, // Internal format of the texture data, e.g., GL_RGB8. 
 	glBaseInternalformat: u32, // Base format of the texture data, e.g., GL_RGB. 
@@ -92,7 +87,7 @@ Texture1 :: struct {
  * functions and these fields should be considered read-only.
  */
 Texture2 :: struct {
-	using _:                TEXTURECLASSDEFN,
+	using _:                Texture,
 	vkFormat:               u32,
 	pDfd:                   [^]u32,
 	supercompressionScheme: SupercmpScheme,
