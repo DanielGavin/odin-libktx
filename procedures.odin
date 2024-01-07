@@ -12,40 +12,40 @@ when ODIN_OS == .Windows {
 /**
  * @brief type for a pointer to a stream reading function
  */
-Stream_read :: proc(str: ^Stream, dst: rawptr, count: c.size_t) -> error_code_e
+Stream_read :: proc "c" (str: ^Stream, dst: rawptr, count: c.size_t) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream skipping function
 */
-Stream_skip :: proc(str: ^Stream, count: c.size_t) -> error_code_e
+Stream_skip :: proc "c" (str: ^Stream, count: c.size_t) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream writing function
 */
-Stream_write :: proc(str: ^Stream, src: rawptr, size: c.size_t, count: c.size_t) -> error_code_e
+Stream_write :: proc "c" (str: ^Stream, src: rawptr, size: c.size_t, count: c.size_t) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream position query function
 */
-Stream_getpos :: proc(str: ^Stream, offset: ^c.size_t) -> error_code_e
+Stream_getpos :: proc "c" (str: ^Stream, offset: ^c.size_t) -> error_code_e
 
 
 /**
 * @brief type for a pointer to a stream position query function
 */
-Stream_setpos :: proc(str: ^Stream, offset: c.size_t) -> error_code_e
+Stream_setpos :: proc "c" (str: ^Stream, offset: c.size_t) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream size query function
 */
-Stream_getsize :: proc(str: ^Stream, size: ^c.size_t) -> error_code_e
+Stream_getsize :: proc "c" (str: ^Stream, size: ^c.size_t) -> error_code_e
 
 /**
 * @brief Destruct a stream
 */
-Stream_destruct :: proc(str: ^Stream)
+Stream_destruct :: proc "c" (str: ^Stream)
 
-PFNKTXITERCB :: proc(
+PFNKTXITERCB :: proc "c" (
 	mipLevel: i32,
 	face: i32,
 	width: i32,
@@ -56,7 +56,7 @@ PFNKTXITERCB :: proc(
 	userdata: rawptr,
 )
 
-PFNKTEXSETIMAGEFROMMEMORY :: proc(
+PFNKTEXSETIMAGEFROMMEMORY :: proc "c" (
 	This: ^Texture,
 	level: u32,
 	layer: u32,
@@ -65,9 +65,9 @@ PFNKTEXSETIMAGEFROMMEMORY :: proc(
 	srcSize: c.size_t,
 ) -> error_code
 
-PFNKTEXDESTROY :: proc(This: ^Texture)
+PFNKTEXDESTROY :: proc "c" (This: ^Texture)
 
-PFNKTEXGETIMAGEOFFSET :: proc(
+PFNKTEXGETIMAGEOFFSET :: proc "c" (
 	This: ^Texture,
 	level: u32,
 	layer: u32,
@@ -75,22 +75,21 @@ PFNKTEXGETIMAGEOFFSET :: proc(
 	pOffset: ^c.size_t,
 ) -> error_code
 
-PFNKTEXGETDATASIZEUNCOMPRESSED :: proc(This: ^Texture) -> c.size_t
-PFNKTEXGETIMAGESIZE :: proc(This: ^Texture, level: u32) -> c.size_t
-PFNKTEXITERATELEVELS :: proc(This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code
+PFNKTEXGETDATASIZEUNCOMPRESSED :: proc "c" (This: ^Texture) -> c.size_t
+PFNKTEXGETIMAGESIZE :: proc "c" (This: ^Texture, level: u32) -> c.size_t
+PFNKTEXITERATELEVELS :: proc "c" (This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code
 
-
-PFNKTEXITERATELOADLEVELFACES :: proc(
+PFNKTEXITERATELOADLEVELFACES :: proc "c" (
 	This: ^Texture,
 	iterCb: PFNKTXITERCB,
 	userdata: rawptr,
 ) -> error_code
 
-PFNKTEXLOADIMAGEDATA :: proc(This: ^Texture, pBuffer: [^]u8, bufSize: c.size_t) -> error_code
-PFNKTEXNEEDSTRANSCODING :: proc(This: ^Texture) -> b32
-PFNKTEXWRITETONAMEDFILE :: proc(This: ^Texture, dstname: cstring) -> error_code
-PFNKTEXWRITETOMEMORY :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) -> error_code
-PFNKTEXWRITETOSTREAM :: proc(This: ^Texture, dststr: ^Stream) -> error_code
+PFNKTEXLOADIMAGEDATA :: proc "c" (This: ^Texture, pBuffer: [^]u8, bufSize: c.size_t) -> error_code
+PFNKTEXNEEDSTRANSCODING :: proc "c" (This: ^Texture) -> b32
+PFNKTEXWRITETONAMEDFILE :: proc "c" (This: ^Texture, dstname: cstring) -> error_code
+PFNKTEXWRITETOMEMORY :: proc "c" (This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) -> error_code
+PFNKTEXWRITETOSTREAM :: proc "c" (This: ^Texture, dststr: ^Stream) -> error_code
 
 
 Texture_SetImageFromMemory :: proc(

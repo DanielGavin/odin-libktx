@@ -2,6 +2,7 @@ package libktx
 
 import "core:c"
 
+import "vendor:vulkan"
 
 HashList :: distinct c.size_t
 HashListEntry :: distinct c.size_t
@@ -112,7 +113,7 @@ Texture2 :: struct {
  */
 TextureCreateInfo :: struct {
 	glInternalformat: u32, // Internal format for the texture, e.g., GL_RGB8. Ignored when creating a ktxTexture2.
-	vkFormat:         u32, // VkFormat for texture. Ignored when creating a ktxTexture1.
+	vkFormat:         vulkan.Format, // VkFormat for texture. Ignored when creating a ktxTexture1.
 	pDfd:             [^]u32, // Pointer to DFD. Used only when creating a ktxTexture2 and only if vkFormat is VK_FORMAT_UNDEFINED.
 	baseWidth:        u32, // Width of the base level of the texture. 
 	baseHeight:       u32, // Height of the base level of the texture. 

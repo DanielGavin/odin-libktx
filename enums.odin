@@ -1,6 +1,8 @@
 package libktx
 
-error_code_e :: enum {
+import "core:c"
+
+error_code_e :: enum (c.int) {
 	SUCCESS = 0, // Operation was successful. 
 	FILE_DATA_ERROR, // The data in the file is inconsistent with the spec. 
 	FILE_ISPIPE, // The file is a pipe or named pipe. 
@@ -30,22 +32,22 @@ Result :: error_code_e
 error_code :: error_code_e
 
 
-OrientationX :: enum {
+OrientationX :: enum (c.int) {
 	KTX_ORIENT_X_LEFT  = 'l',
 	KTX_ORIENT_X_RIGHT = 'r',
 }
 
-OrientationY :: enum {
+OrientationY :: enum (c.int) {
 	KTX_ORIENT_Y_UP   = 'u',
 	KTX_ORIENT_Y_DOWN = 'd',
 }
 
-OrientationZ :: enum {
+OrientationZ :: enum (c.int) {
 	KTX_ORIENT_Z_IN  = 'i',
 	KTX_ORIENT_Z_OUT = 'o',
 }
 
-class_id :: enum {
+class_id :: enum (c.int) {
 	ktxTexture1_c = 1,
 	ktxTexture2_c = 2,
 }
@@ -53,7 +55,7 @@ class_id :: enum {
 /**
  * @brief Enumerators identifying the supercompression scheme.
  */
-SupercmpScheme :: enum {
+SupercmpScheme :: enum (c.int) {
 	KTX_SS_NONE               = 0, // No supercompression. 
 	KTX_SS_BASIS_LZ           = 1, // Basis LZ supercompression. 
 	KTX_SS_ZSTD               = 2, // ZStd supercompression. 
@@ -72,7 +74,7 @@ SupercmpScheme :: enum {
  *
  * @sa ktxTexture1_Create() and ktxTexture2_Create().
  */
-TextureCreateStorageEnum :: enum {
+TextureCreateStorageEnum :: enum (c.int) {
 	TEXTURE_CREATE_NO_STORAGE    = 0, // Don't allocate any image storage. 
 	TEXTURE_CREATE_ALLOC_STORAGE = 1, // Allocate image storage. 
 }
@@ -84,7 +86,7 @@ TextureCreateStorageEnum :: enum {
  *
  * @sa ktxTexture_CreateFrom*
  */
-TextureCreateFlagBit :: enum {
+TextureCreateFlagBit :: enum (c.int) {
 	KTX_TEXTURE_CREATE_NO_FLAGS              = 0,
 	KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT   = 1, //Load the images from the KTX source. 
 	KTX_TEXTURE_CREATE_RAW_KVDATA_BIT        = 2, //Load the raw key-value data instead of creating a @c ktxHashList from it. 
@@ -98,7 +100,7 @@ TextureCreateFlags :: distinct bit_set[TextureCreateFlagBit;u32]
 /**
  * @brief Flags specifiying UASTC encoding options.
  */
-pack_uastc_flag_bits_e :: enum {
+pack_uastc_flag_bits_e :: enum (c.int) {
 	PACK_UASTC_LEVEL_FASTEST                     = 0, // Fastest compression. 43.45dB. 
 	PACK_UASTC_LEVEL_FASTER                      = 1, // Faster compression. 46.49dB. 
 	PACK_UASTC_LEVEL_DEFAULT                     = 2, // Default compression. 47.47dB. 
@@ -119,7 +121,7 @@ pack_uastc_flags :: pack_uastc_flag_bits_e
 /**
  * @brief Options specifiying ASTC encoding quality levels.
  */
-pack_astc_quality_levels_e :: enum {
+pack_astc_quality_levels_e :: enum (c.int) {
 	PACK_ASTC_QUALITY_LEVEL_FASTEST    = 0, //Fastest compression.
 	PACK_ASTC_QUALITY_LEVEL_FAST       = 10, // Fast compression. 
 	PACK_ASTC_QUALITY_LEVEL_MEDIUM     = 60, // Medium compression.
@@ -132,7 +134,7 @@ pack_astc_quality_levels_e :: enum {
 /**
  * @brief Options specifiying ASTC encoding block dimensions
  */
-pack_astc_block_dimension_e :: enum {
+pack_astc_block_dimension_e :: enum (c.int) {
 	// 2D formats
 	PACK_ASTC_BLOCK_DIMENSION_4x4, //: 8.00 bpp
 	PACK_ASTC_BLOCK_DIMENSION_5x4, //: 6.40 bpp
@@ -167,7 +169,7 @@ pack_astc_block_dimension_e :: enum {
  * @brief Options specifying ASTC encoder profile mode
  *        This and function is used later to derive the profile.
  */
-pack_astc_encoder_mode_e :: enum {
+pack_astc_encoder_mode_e :: enum (c.int) {
 	PACK_ASTC_ENCODER_MODE_DEFAULT,
 	PACK_ASTC_ENCODER_MODE_LDR,
 	PACK_ASTC_ENCODER_MODE_HDR,
@@ -175,7 +177,7 @@ pack_astc_encoder_mode_e :: enum {
 }
 
 
-streamType :: enum {
+streamType :: enum (c.int) {
 	eStreamTypeFile   = 1,
 	eStreamTypeMemory = 2,
 	eStreamTypeCustom = 3,
@@ -201,7 +203,7 @@ streamType :: enum {
  * Vulkan support sRGB variants of these. Doing sRGB decoding in the shader
  * will not produce correct results if any texture filtering is being used.
  */
-transcode_fmt_e :: enum {
+transcode_fmt_e :: enum (c.int) {
 	// Compressed formats
 
 	// ETC1-2
@@ -325,7 +327,7 @@ transcode_fmt_e :: enum {
 /**
  * @brief Flags guiding transcoding of Basis Universal compressed textures.
  */
-transcode_flag_bits_e :: enum {
+transcode_flag_bits_e :: enum (c.int) {
 	TF_PVRTC_DECODE_TO_NEXT_POW2              = 1,
 	/*!< PVRTC1: decode non-pow2 ETC1S texture level to the next larger
              power of 2 (not implemented yet, but we're going to support it).
