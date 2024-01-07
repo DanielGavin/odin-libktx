@@ -45,7 +45,6 @@ Stream_getsize :: proc(str: ^Stream, size: ^c.size_t) -> error_code_e
 */
 Stream_destruct :: proc(str: ^Stream)
 
-
 PFNKTXITERCB :: proc(
 	mipLevel: i32,
 	face: i32,
@@ -56,6 +55,28 @@ PFNKTXITERCB :: proc(
 	pixels: rawptr,
 	userdata: rawptr,
 )
+
+PFNKTEXSETIMAGEFROMMEMORY :: proc(
+	This: ^Texture,
+	level: u32,
+	layer: u32,
+	faceSlice: u32,
+	src: [^]u8,
+	srcSize: c.size_t,
+) -> error_code
+
+
+Texture_SetImageFromMemory :: proc(
+	This: ^Texture,
+	level: u32,
+	layer: u32,
+	faceSlice: u32,
+	src: [^]u8,
+	srcSize: c.size_t,
+) -> error_code {
+	return This.vtbl.SetImageFromMemory(This, level, layer, faceSlice, src, srcSize)
+}
+
 @(link_prefix = "ktx")
 foreign ktx {
 	Texture_CreateFromNamedFile :: proc(filename: cstring, createFlags: TextureCreateFlags, newTex: ^^Texture) -> error_code ---
@@ -118,9 +139,7 @@ foreign ktx {
 	HashList_ConstructCopy :: proc(ppHl: ^HashList, orig: HashList) ---
 	HashList_Destroy :: proc(head: ^HashList) ---
 	HashList_Destruct :: proc(head: ^HashList) ---
-
 	HashList_AddKVPair :: proc(head: ^HashList, key: cstring, valueLen: u32, value: rawptr) -> error_code ---
-
 	HashList_DeleteEntry :: proc(pHead: ^HashList, pEntry: ^HashListEntry) -> error_code ---
 	HashList_DeleteKVPair :: proc(pHead: ^HashList, key: cstring) -> error_code ---
 	HashList_FindEntry :: proc(pHead: ^HashList, key: cstring, ppEntry: ^^HashListEntry) -> error_code ---

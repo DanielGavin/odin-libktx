@@ -9,7 +9,7 @@ HashListEntry :: distinct c.size_t
 
 TEXTURECLASSDEFN :: struct {
 	class_id:        class_id,
-	vtbl:            rawptr,
+	vtbl:            ^Texture_vtbl,
 	vvtbl:           rawptr,
 	_protected:      rawptr,
 	isArray:         b32,
@@ -29,6 +29,23 @@ TEXTURECLASSDEFN :: struct {
 	kvData:          [^]u8,
 	dataSize:        c.size_t,
 	pData:           [^]u8,
+}
+
+Texture_vtbl :: struct {
+	Destroy:                 rawptr,
+	GetImageOffset:          rawptr,
+	GetDataSizeUncompressed: rawptr,
+	GetImageSize:            rawptr,
+	IterateLevels:           rawptr,
+	IterateLoadLevelFaces:   rawptr,
+	NeedsTranscoding:        rawptr,
+	LoadImageData:           rawptr,
+	SetImageFromMemory:      PFNKTEXSETIMAGEFROMMEMORY,
+	SetImageFromStdioStream: rawptr,
+	WriteToStdioStream:      rawptr,
+	WriteToNamedFile:        rawptr,
+	WriteToMemory:           rawptr,
+	WriteToStream:           rawptr,
 }
 
 
