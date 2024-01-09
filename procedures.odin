@@ -2,6 +2,7 @@ package libktx
 
 
 import "core:c"
+import vk "vendor:vulkan"
 
 when ODIN_OS == .Windows {
 	foreign import ktx "external/ktx.lib"
@@ -22,7 +23,12 @@ Stream_skip :: proc "c" (str: ^Stream, count: c.size_t) -> error_code_e
 /**
 * @brief type for a pointer to a stream writing function
 */
-Stream_write :: proc "c" (str: ^Stream, src: rawptr, size: c.size_t, count: c.size_t) -> error_code_e
+Stream_write :: proc "c" (
+	str: ^Stream,
+	src: rawptr,
+	size: c.size_t,
+	count: c.size_t,
+) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream position query function
@@ -77,7 +83,11 @@ PFNKTEXGETIMAGEOFFSET :: proc "c" (
 
 PFNKTEXGETDATASIZEUNCOMPRESSED :: proc "c" (This: ^Texture) -> c.size_t
 PFNKTEXGETIMAGESIZE :: proc "c" (This: ^Texture, level: u32) -> c.size_t
-PFNKTEXITERATELEVELS :: proc "c" (This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code
+PFNKTEXITERATELEVELS :: proc "c" (
+	This: ^Texture,
+	iterCb: PFNKTXITERCB,
+	userdata: rawptr,
+) -> error_code
 
 PFNKTEXITERATELOADLEVELFACES :: proc "c" (
 	This: ^Texture,
@@ -114,6 +124,32 @@ Texture_WriteToMemory :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) ->
 Texture_WriteToStream :: proc(This: ^Texture, dststr: ^Stream) -> error_code {
 	return This.vtbl.WriteToStream(This, dststr)
 }
+
+VulkanTexture_subAllocatorAllocMemFuncPtr :: proc "c" (
+	allocInfo: ^vk.MemoryAllocateInfo,
+	memReg: ^vk.MemoryRequirements,
+	pageCount: ^u64,
+) -> u64
+
+VulkanTexture_subAllocatorBindBufferFuncPtr :: proc "c" (
+	buffer: vk.Buffer,
+	allocId: u64,
+) -> vk.Result
+
+VulkanTexture_subAllocatorBindImageFuncPtr :: proc "c" (image: vk.Image, allocId: u64) -> vk.Result
+
+VulkanTexture_subAllocatorMemoryMapFuncPtr :: proc "c" (
+	allocId: u64,
+	pageNumber: u64,
+	mapLength: ^vk.DeviceSize,
+	dataPtr: ^rawptr,
+) -> vk.Result
+
+
+VulkanTexture_subAllocatorMemoryUnmapFuncPtr :: proc "c" (allocId: u64, pageNumber: u64)
+
+VulkanTexture_subAllocatorFreeMemFuncPtr :: proc "c" (allocId: u64)
+
 
 @(link_prefix = "ktx")
 foreign ktx {
@@ -188,4 +224,70 @@ foreign ktx {
 	HashList_Deserialize :: proc(pHead: ^HashList, kvdLen: u32, kvd: rawptr) -> error_code ---
 	HashListEntry_GetKey :: proc(This: HashListEntry, pKeyLen: ^u32, ppKey: ^^u8) -> error_code ---
 	HashListEntry_GetValue :: proc(This: HashListEntry, pValueLen: ^u32, ppValue: ^rawptr) -> error_code ---
+
+	VulkanTexture_Destruct_WithSuballocator :: proc(This: ^VulkanTexture, device: vk.Device, pAllocator: ^vk.AllocationCallbacks, subAllocatorCallbacks: ^VulkanTexture_subAllocatorCallbacks) -> error_code ---
+	VulkanTexture_Destruct :: proc(This: ^VulkanTexture, device: vk.Device, pAllocator: ^vk.AllocationCallbacks) ---
+
+	VulkanDeviceInfo_CreateEx :: proc(instance: vk.Instance, physicalDevice: vk.PhysicalDevice, device: vk.Device, queue: vk.Queue, cmdPool: vk.CommandPool, pAllocator: ^vk.AllocationCallbacks, pFunctions: ^VulkanFunctions) -> ^VulkanDeviceInfo ---
+	VulkanDeviceInfo_Create :: proc(physicalDevice: vk.PhysicalDevice, device: vk.Device, queue: vk.Queue, cmdPool: vk.CommandPool, pAllocator: ^vk.AllocationCallbacks) -> ^VulkanDeviceInfo ---
+
+	VulkanDeviceInfo_Construct :: proc(This: ^VulkanDeviceInfo, physicalDevice: vk.PhysicalDevice, device: vk.Device, queue: vk.Queue, cmdPool: vk.CommandPool, pAllocator: ^vk.AllocationCallbacks) -> error_code ---
+	VulkanDeviceInfo_ConstructEx :: proc(This: ^VulkanDeviceInfo, instance: vk.Instance, physicalDevice: vk.PhysicalDevice, device: vk.Device, queue: vk.Queue, cmdPool: vk.CommandPool, pAllocator: ^vk.AllocationCallbacks, pFunctions: ^VulkanFunctions) -> error_code ---
+
+	VulkanDeviceInfo_Destruct :: proc(This: ^VulkanDeviceInfo) ---
+	VulkanDeviceInfo_Destroy :: proc(This: ^VulkanDeviceInfo) ---
+
+	Texture_VkUploadEx_WithSuballocator :: proc(This: ^Texture, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout, subAllocatorCallbacks: ^VulkanTexture_subAllocatorCallbacks) -> error_code ---
+	Texture_VkUploadEx :: proc(This: ^Texture, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout) -> error_code ---
+	Texture_VkUpload :: proc(This: ^Texture, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture) -> error_code ---
+
+	Texture1_VkUploadEx_WithSuballocator :: proc(This: ^Texture1, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout, subAllocatorCallbacks: ^VulkanTexture_subAllocatorCallbacks) -> error_code ---
+	Texture1_VkUploadEx :: proc(This: ^Texture1, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout) -> error_code ---
+	Texture1_VkUpload :: proc(This: ^Texture1, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture) -> error_code ---
+
+	Texture2_VkUploadEx_WithSuballocator :: proc(This: ^Texture2, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout, subAllocatorCallbacks: ^VulkanTexture_subAllocatorCallbacks) -> error_code ---
+	Texture2_VkUploadEx :: proc(This: ^Texture2, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture, tilling: vk.ImageTiling, usageFlags: vk.ImageUsageFlags, finalLayout: vk.ImageLayout) -> error_code ---
+	Texture2_VkUpload :: proc(This: ^Texture2, vdi: ^VulkanDeviceInfo, vkTexture: ^VulkanTexture) -> error_code ---
+
+	Texture_GetVkFormat :: proc(This: ^Texture) -> vk.Format ---
+	Texture1_GetVkFormat :: proc(This: ^Texture1) -> vk.Format ---
+	Texture2_GetVkFormat :: proc(This: ^Texture2) -> vk.Format ---
+}
+
+
+create_vulkan_functions :: proc() -> VulkanFunctions {
+	return(
+		VulkanFunctions {
+			vkGetInstanceProcAddr = vk.GetInstanceProcAddr,
+			vkGetDeviceProcAddr = vk.GetDeviceProcAddr,
+			vkAllocateCommandBuffers = vk.AllocateCommandBuffers,
+			vkAllocateMemory = vk.AllocateMemory,
+			vkBeginCommandBuffer = vk.BeginCommandBuffer,
+			vkBindBufferMemory = vk.BindBufferMemory,
+			vkBindImageMemory = vk.BindImageMemory,
+			vkCmdBlitImage = vk.CmdBlitImage,
+			vkCmdCopyBufferToImage = vk.CmdCopyBufferToImage,
+			vkCmdPipelineBarrier = vk.CmdPipelineBarrier,
+			vkCreateImage = vk.CreateImage,
+			vkDestroyImage = vk.DestroyImage,
+			vkCreateBuffer = vk.CreateBuffer,
+			vkDestroyBuffer = vk.DestroyBuffer,
+			vkCreateFence = vk.CreateFence,
+			vkDestroyFence = vk.DestroyFence,
+			vkEndCommandBuffer = vk.EndCommandBuffer,
+			vkFreeCommandBuffers = vk.FreeCommandBuffers,
+			vkFreeMemory = vk.FreeMemory,
+			vkGetBufferMemoryRequirements = vk.GetBufferMemoryRequirements,
+			vkGetImageMemoryRequirements = vk.GetImageMemoryRequirements,
+			vkGetImageSubresourceLayout = vk.GetImageSubresourceLayout,
+			vkGetPhysicalDeviceImageFormatProperties = vk.GetPhysicalDeviceImageFormatProperties,
+			vkGetPhysicalDeviceFormatProperties = vk.GetPhysicalDeviceFormatProperties,
+			vkGetPhysicalDeviceMemoryProperties = vk.GetPhysicalDeviceMemoryProperties,
+			vkMapMemory = vk.MapMemory,
+			vkQueueSubmit = vk.QueueSubmit,
+			vkQueueWaitIdle = vk.QueueWaitIdle,
+			vkUnmapMemory = vk.UnmapMemory,
+			vkWaitForFences = vk.WaitForFences,
+		} \
+	)
 }

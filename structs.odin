@@ -2,7 +2,7 @@ package libktx
 
 import "core:c"
 
-import "vendor:vulkan"
+import vk "vendor:vulkan"
 
 HashList :: distinct c.size_t
 HashListEntry :: distinct c.size_t
@@ -108,7 +108,7 @@ Texture2 :: struct {
  */
 TextureCreateInfo :: struct {
 	glInternalformat: u32, // Internal format for the texture, e.g., GL_RGB8. Ignored when creating a ktxTexture2.
-	vkFormat:         vulkan.Format, // VkFormat for texture. Ignored when creating a ktxTexture1.
+	vkFormat:         vk.Format, // VkFormat for texture. Ignored when creating a ktxTexture1.
 	pDfd:             [^]u32, // Pointer to DFD. Used only when creating a ktxTexture2 and only if vkFormat is VK_FORMAT_UNDEFINED.
 	baseWidth:        u32, // Width of the base level of the texture. 
 	baseHeight:       u32, // Height of the base level of the texture. 
@@ -346,4 +346,107 @@ BasisParams :: struct {
 	/*!< Disable RDO multithreading (slightly higher compression,
              deterministic).
          */
+}
+
+/**
+ * @struct VulkanFunctions
+ * @brief Struct for applications to pass Vulkan function pointers to the
+ *        ktxTexture_VkUpload functions via a ktxVulkanDeviceInfo struct.
+ *
+ * @c vkGetInstanceProcAddr and @c vkGetDeviceProcAddr should be set, others
+ * are optional.
+ */
+VulkanFunctions :: struct {
+	vkGetInstanceProcAddr:                    vk.ProcGetInstanceProcAddr,
+	vkGetDeviceProcAddr:                      vk.ProcGetDeviceProcAddr,
+	vkAllocateCommandBuffers:                 vk.ProcAllocateCommandBuffers,
+	vkAllocateMemory:                         vk.ProcAllocateMemory,
+	vkBeginCommandBuffer:                     vk.ProcBeginCommandBuffer,
+	vkBindBufferMemory:                       vk.ProcBindBufferMemory,
+	vkBindImageMemory:                        vk.ProcBindImageMemory,
+	vkCmdBlitImage:                           vk.ProcCmdBlitImage,
+	vkCmdCopyBufferToImage:                   vk.ProcCmdCopyBufferToImage,
+	vkCmdPipelineBarrier:                     vk.ProcCmdPipelineBarrier,
+	vkCreateImage:                            vk.ProcCreateImage,
+	vkDestroyImage:                           vk.ProcDestroyImage,
+	vkCreateBuffer:                           vk.ProcCreateBuffer,
+	vkDestroyBuffer:                          vk.ProcDestroyBuffer,
+	vkCreateFence:                            vk.ProcCreateFence,
+	vkDestroyFence:                           vk.ProcDestroyFence,
+	vkEndCommandBuffer:                       vk.ProcEndCommandBuffer,
+	vkFreeCommandBuffers:                     vk.ProcFreeCommandBuffers,
+	vkFreeMemory:                             vk.ProcFreeMemory,
+	vkGetBufferMemoryRequirements:            vk.ProcGetBufferMemoryRequirements,
+	vkGetImageMemoryRequirements:             vk.ProcGetImageMemoryRequirements,
+	vkGetImageSubresourceLayout:              vk.ProcGetImageSubresourceLayout,
+	vkGetPhysicalDeviceImageFormatProperties: vk.ProcGetPhysicalDeviceImageFormatProperties,
+	vkGetPhysicalDeviceFormatProperties:      vk.ProcGetPhysicalDeviceFormatProperties,
+	vkGetPhysicalDeviceMemoryProperties:      vk.ProcGetPhysicalDeviceMemoryProperties,
+	vkMapMemory:                              vk.ProcMapMemory,
+	vkQueueSubmit:                            vk.ProcQueueSubmit,
+	vkQueueWaitIdle:                          vk.ProcQueueWaitIdle,
+	vkUnmapMemory:                            vk.ProcUnmapMemory,
+	vkWaitForFences:                          vk.ProcWaitForFences,
+}
+
+/**
+ * @class VulkanTexture
+ * @brief Struct for returning information about the Vulkan texture image
+ *        created by the ktxTexture_VkUpload* functions.
+ *
+ * Creation of these objects is internal to the upload functions.
+ */
+VulkanTexture :: struct {
+	vkDestroyImage: vk.ProcDestroyImage,
+	vkFreeMemory:   vk.ProcFreeMemory,
+	image:          vk.Image,
+	imageFormat:    vk.Format,
+	imageLayout:    vk.ImageLayout,
+	deviceMemory:   vk.DeviceMemory,
+	viewType:       vk.ImageViewType,
+	width:          u32,
+	height:         u32,
+	depth:          u32,
+	levelCount:     u32,
+	layerCount:     u32,
+	allocationId:   u64,
+}
+
+
+/**
+ * @class VulkanTexture_subAllocatorCallbacks
+ * @brief Struct that contains all callbacks necessary for suballocation.
+ *
+ * These pointers must all be provided for upload or destroy to occur using suballocator callbacks.
+ */
+VulkanTexture_subAllocatorCallbacks :: struct {
+	allocMemFuncPtr:    VulkanTexture_subAllocatorAllocMemFuncPtr, /*!< Pointer to the memory procurement function. Can suballocate one or more pages. */
+	bindBufferFuncPtr:  VulkanTexture_subAllocatorBindBufferFuncPtr, /*!< Pointer to bind-buffer-to-suballocation(s) function. */
+	bindImageFuncPtr:   VulkanTexture_subAllocatorBindImageFuncPtr, /*!< Pointer to bind-image-to-suballocation(s) function. */
+	memoryMapFuncPtr:   VulkanTexture_subAllocatorMemoryMapFuncPtr, /*!< Pointer to function for mapping the memory of a specific page. */
+	memoryUnmapFuncPtr: VulkanTexture_subAllocatorMemoryUnmapFuncPtr, /*!< Pointer to function for unmapping the memory of a specific page. */
+	freeMemFuncPtr:     VulkanTexture_subAllocatorFreeMemFuncPtr, /*!< Pointer to the free procurement function. */
+}
+
+
+/**
+ * @class VulkanDeviceInfo
+ * @brief Struct for passing information about the Vulkan device on which
+ *        to create images to the texture image loading functions.
+ *
+ * Avoids passing a large number of parameters to each loading function.
+ * Use of ktxVulkanDeviceInfo_create() or ktxVulkanDeviceInfo_construct() to
+ * populate this structure is highly recommended.
+ *
+ */
+VulkanDeviceInfo :: struct {
+	instance:               vk.Instance, /*!< Instance used to communicate with vulkan. */
+	physicalDevice:         vk.PhysicalDevice, /*!< Handle of the physical device. */
+	device:                 vk.Device, /*!< Handle of the logical device. */
+	queue:                  vk.Queue, /*!< Handle to the queue to which to submit commands. */
+	cmdBuffer:              vk.CommandBuffer, /*!< Handle of the cmdBuffer to use. */
+	cmdPool:                vk.CommandPool,
+	pAllocator:             ^vk.AllocationCallbacks,
+	deviceMemoryProperties: vk.PhysicalDeviceMemoryProperties,
+	vkFuncs:                VulkanFunctions,
 }
