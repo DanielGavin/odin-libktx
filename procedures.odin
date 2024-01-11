@@ -23,12 +23,7 @@ Stream_skip :: proc "c" (str: ^Stream, count: c.size_t) -> error_code_e
 /**
 * @brief type for a pointer to a stream writing function
 */
-Stream_write :: proc "c" (
-	str: ^Stream,
-	src: rawptr,
-	size: c.size_t,
-	count: c.size_t,
-) -> error_code_e
+Stream_write :: proc "c" (str: ^Stream, src: rawptr, size: c.size_t, count: c.size_t) -> error_code_e
 
 /**
 * @brief type for a pointer to a stream position query function
@@ -83,11 +78,7 @@ PFNKTEXGETIMAGEOFFSET :: proc "c" (
 
 PFNKTEXGETDATASIZEUNCOMPRESSED :: proc "c" (This: ^Texture) -> c.size_t
 PFNKTEXGETIMAGESIZE :: proc "c" (This: ^Texture, level: u32) -> c.size_t
-PFNKTEXITERATELEVELS :: proc "c" (
-	This: ^Texture,
-	iterCb: PFNKTXITERCB,
-	userdata: rawptr,
-) -> error_code
+PFNKTEXITERATELEVELS :: proc "c" (This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code
 
 PFNKTEXITERATELOADLEVELFACES :: proc "c" (
 	This: ^Texture,
@@ -131,10 +122,7 @@ VulkanTexture_subAllocatorAllocMemFuncPtr :: proc "c" (
 	pageCount: ^u64,
 ) -> u64
 
-VulkanTexture_subAllocatorBindBufferFuncPtr :: proc "c" (
-	buffer: vk.Buffer,
-	allocId: u64,
-) -> vk.Result
+VulkanTexture_subAllocatorBindBufferFuncPtr :: proc "c" (buffer: vk.Buffer, allocId: u64) -> vk.Result
 
 VulkanTexture_subAllocatorBindImageFuncPtr :: proc "c" (image: vk.Image, allocId: u64) -> vk.Result
 
@@ -188,6 +176,7 @@ foreign ktx {
 	Texture2_GetOETF :: proc(This: ^Texture2) -> u32 ---
 	Texture2_GetPremultipliedAlpha :: proc(This: ^Texture2) -> b32 ---
 	Texture2_NeedsTranscoding :: proc(This: ^Texture2) -> b32 ---
+	Texture2_GetColorModel_e :: proc(This: ^Texture2) -> khr_df_model ---
 
 	Texture2_CompressAstcEx :: proc(This: ^Texture2, params: ^AstcParams) -> error_code ---
 	Texture2_CompressAstc :: proc(This: ^Texture2, quality: u32) -> error_code ---

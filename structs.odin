@@ -88,7 +88,7 @@ Texture1 :: struct {
  */
 Texture2 :: struct {
 	using _:                Texture,
-	vkFormat:               u32,
+	vkFormat:               vk.Format,
 	pDfd:                   [^]u32,
 	supercompressionScheme: SupercmpScheme,
 	isVideo:                b32,
@@ -347,6 +347,95 @@ BasisParams :: struct {
              deterministic).
          */
 }
+
+khr_df_model :: enum {
+	/* No interpretation of color channels defined */
+	MODEL_UNSPECIFIED = 0,
+	/* Color primaries (red, green, blue) + alpha, depth and stencil */
+	MODEL_RGBSDA      = 1,
+	/* Color differences (Y', Cb, Cr) + alpha, depth and stencil */
+	MODEL_YUVSDA      = 2,
+	/* Color differences (Y', I, Q) + alpha, depth and stencil */
+	MODEL_YIQSDA      = 3,
+	/* Perceptual color (CIE L*a*b*) + alpha, depth and stencil */
+	MODEL_LABSDA      = 4,
+	/* Subtractive colors (cyan, magenta, yellow, black) + alpha */
+	MODEL_CMYKA       = 5,
+	/* Non-color coordinate data (X, Y, Z, W) */
+	MODEL_XYZW        = 6,
+	/* Hue, saturation, value, hue angle on color circle, plus alpha */
+	MODEL_HSVA_ANG    = 7,
+	/* Hue, saturation, lightness, hue angle on color circle, plus alpha */
+	MODEL_HSLA_ANG    = 8,
+	/* Hue, saturation, value, hue on color hexagon, plus alpha */
+	MODEL_HSVA_HEX    = 9,
+	/* Hue, saturation, lightness, hue on color hexagon, plus alpha */
+	MODEL_HSLA_HEX    = 10,
+	/* Lightweight approximate color difference (luma, orange, green) */
+	MODEL_YCGCOA      = 11,
+	/* ITU BT.2020 constant luminance YcCbcCrc */
+	MODEL_YCCBCCRC    = 12,
+	/* ITU BT.2100 constant intensity ICtCp */
+	MODEL_ICTCP       = 13,
+	/* CIE 1931 XYZ color coordinates (X, Y, Z) */
+	MODEL_CIEXYZ      = 14,
+	/* CIE 1931 xyY color coordinates (X, Y, Y) */
+	MODEL_CIEXYY      = 15,
+
+	/* Compressed formats start at 128. */
+	/* These compressed formats should generally have a single sample,
+       sited at the 0,0 position of the texel block. Where multiple
+       channels are used to distinguish formats, these should be cosited. */
+	/* Direct3D (and S3) compressed formats */
+	/* Note that premultiplied status is recorded separately */
+	/* DXT1 "channels" are RGB (0), Alpha (1) */
+	/* DXT1/BC1 with one channel is opaque */
+	/* DXT1/BC1 with a cosited alpha sample is transparent */
+	MODEL_DXT1A       = 128,
+	MODEL_BC1A        = 128,
+	/* DXT2/DXT3/BC2, with explicit 4-bit alpha */
+	MODEL_DXT2        = 129,
+	MODEL_DXT3        = 129,
+	MODEL_BC2         = 129,
+	/* DXT4/DXT5/BC3, with interpolated alpha */
+	MODEL_DXT4        = 130,
+	MODEL_DXT5        = 130,
+	MODEL_BC3         = 130,
+	/* BC4 - single channel interpolated 8-bit data */
+	/* (The UNORM/SNORM variation is recorded in the channel data) */
+	MODEL_BC4         = 131,
+	/* BC5 - two channel interpolated 8-bit data */
+	/* (The UNORM/SNORM variation is recorded in the channel data) */
+	MODEL_BC5         = 132,
+	/* BC6H - DX11 format for 16-bit float channels */
+	MODEL_BC6H        = 133,
+	/* BC7 - DX11 format */
+	MODEL_BC7         = 134,
+	/* Gap left for future desktop expansion */
+
+	/* Mobile compressed formats follow */
+	/* A format of ETC1 indicates that the format shall be decodable
+       by an ETC1-compliant decoder and not rely on ETC2 features */
+	MODEL_ETC1        = 160,
+	/* A format of ETC2 is permitted to use ETC2 encodings on top of
+       the baseline ETC1 specification */
+	/* The ETC2 format has channels "red", "green", "RGB" and "alpha",
+       which should be cosited samples */
+	/* Punch-through alpha can be distinguished from full alpha by
+       the plane size in bytes required for the texel block */
+	MODEL_ETC2        = 161,
+	/* Adaptive Scalable Texture Compression */
+	/* ASTC HDR vs LDR is determined by the float flag in the channel */
+	/* ASTC block size can be distinguished by texel block size */
+	MODEL_ASTC        = 162,
+	/* ETC1S is a simplified subset of ETC1 */
+	MODEL_ETC1S       = 163,
+	/* PowerVR Texture Compression */
+	MODEL_PVRTC       = 164,
+	MODEL_PVRTC2      = 165,
+	MODEL_UASTC       = 166,
+}
+
 
 /**
  * @struct VulkanFunctions
