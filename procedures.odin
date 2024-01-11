@@ -104,6 +104,10 @@ Texture_SetImageFromMemory :: proc(
 	return This.vtbl.SetImageFromMemory(This, level, layer, faceSlice, src, srcSize)
 }
 
+Texture_Destroy :: proc(This: ^Texture) {
+	This.vtbl.Destroy(This)
+}
+
 Texture_WriteToNamedFile :: proc(This: ^Texture, dstname: cstring) -> error_code {
 	return This.vtbl.WriteToNamedFile(This, dstname)
 }
