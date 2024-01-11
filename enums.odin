@@ -87,11 +87,10 @@ TextureCreateStorageEnum :: enum (c.int) {
  * @sa ktxTexture_CreateFrom*
  */
 TextureCreateFlagBit :: enum (c.int) {
-	KTX_TEXTURE_CREATE_NO_FLAGS              = 0,
-	KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT   = 1, //Load the images from the KTX source. 
-	KTX_TEXTURE_CREATE_RAW_KVDATA_BIT        = 2, //Load the raw key-value data instead of creating a @c ktxHashList from it. 
-	KTX_TEXTURE_CREATE_SKIP_KVDATA_BIT       = 3, // Skip any key-value data. This overrides the RAW_KVDATA_BIT. 
-	KTX_TEXTURE_CREATE_CHECK_GLTF_BASISU_BIT = 4, // Load texture compatible with the rulesof KHR_texture_basisu glTF extension 
+	TEXTURE_CREATE_LOAD_IMAGE_DATA   = 0, //Load the images from the KTX source. 
+	TEXTURE_CREATE_RAW_KVDATA        = 1, //Load the raw key-value data instead of creating a @c ktxHashList from it. 
+	TEXTURE_CREATE_SKIP_KVDATA       = 2, // Skip any key-value data. This overrides the RAW_KVDATA_BIT. 
+	TEXTURE_CREATE_CHECK_GLTF_BASISU = 3, // Load texture compatible with the rulesof KHR_texture_basisu glTF extension 
 }
 
 TextureCreateFlags :: distinct bit_set[TextureCreateFlagBit;u32]
