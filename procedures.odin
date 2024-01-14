@@ -87,7 +87,7 @@ PFNKTEXITERATELOADLEVELFACES :: proc "c" (
 ) -> error_code
 
 PFNKTEXLOADIMAGEDATA :: proc "c" (This: ^Texture, pBuffer: [^]u8, bufSize: c.size_t) -> error_code
-PFNKTEXNEEDSTRANSCODING :: proc "c" (This: ^Texture) -> b32
+PFNKTEXNEEDSTRANSCODING :: proc "c" (This: ^Texture) -> c.bool
 PFNKTEXWRITETONAMEDFILE :: proc "c" (This: ^Texture, dstname: cstring) -> error_code
 PFNKTEXWRITETOMEMORY :: proc "c" (This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) -> error_code
 PFNKTEXWRITETOSTREAM :: proc "c" (This: ^Texture, dststr: ^Stream) -> error_code
@@ -159,7 +159,7 @@ foreign ktx {
 	Texture1_CreateFromNamedFile :: proc(filename: cstring, createFlags: TextureCreateFlags, newTex: ^^Texture1) -> error_code ---
 	Texture1_CreateFromMemory :: proc(bytes: [^]u8, size: c.size_t, createFlags: TextureCreateFlags, newTex: ^^Texture1) -> error_code ---
 	Texture1_CreateFromStream :: proc(stream: Stream, createFlags: TextureCreateFlags, newTex: ^^Texture1) -> error_code ---
-	Texture1_NeedsTranscoding :: proc(This: ^Texture1) -> b32 ---
+	Texture1_NeedsTranscoding :: proc(This: ^Texture1) -> c.bool ---
 	Texture1_WriteKTX2ToNamedFile :: proc(This: ^Texture1, dstname: cstring) -> error_code ---
 	Texture1_WriteKTX2ToMemory :: proc(This: ^Texture1, bytes: ^[^]u8, size: ^c.size_t) -> error_code ---
 	Texture1_WriteKTX2ToStream :: proc(This: ^Texture1, dststr: ^Stream) -> error_code ---
@@ -178,8 +178,8 @@ foreign ktx {
 	Texture2_GetComponentInfo :: proc(This: ^Texture2, numComponents: ^u32, componentByteLength: ^u32) ---
 	Texture2_GetNumComponents :: proc(This: ^Texture2) -> u32 ---
 	Texture2_GetOETF :: proc(This: ^Texture2) -> u32 ---
-	Texture2_GetPremultipliedAlpha :: proc(This: ^Texture2) -> b32 ---
-	Texture2_NeedsTranscoding :: proc(This: ^Texture2) -> b32 ---
+	Texture2_GetPremultipliedAlpha :: proc(This: ^Texture2) -> c.bool ---
+	Texture2_NeedsTranscoding :: proc(This: ^Texture2) -> c.bool ---
 	Texture2_GetColorModel_e :: proc(This: ^Texture2) -> khr_df_model ---
 
 	Texture2_CompressAstcEx :: proc(This: ^Texture2, params: ^AstcParams) -> error_code ---
@@ -192,9 +192,9 @@ foreign ktx {
 
 	PrintKTX2InfoTextForNamedFile :: proc(filename: cstring) -> error_code ---
 	PrintKTX2InfoTextForMemory :: proc(bytes: [^]u8, size: c.size_t) -> error_code ---
-	PrintKTX2InfoTextForStream :: proc(bytes: [^]u8, size: c.size_t, base_ident: u32, ident_width: u32, minified: b32) -> error_code ---
-	PrintKTX2InfoJSONForNamedFile :: proc(filename: cstring, base_ident: u32, ident_width: u32, minified: b32) -> error_code ---
-	PrintKTX2InfoJSONForStream :: proc(stream: ^Stream, base_ident: u32, ident_width: u32, minified: b32) -> error_code ---
+	PrintKTX2InfoTextForStream :: proc(bytes: [^]u8, size: c.size_t, base_ident: u32, ident_width: u32, minified: c.bool) -> error_code ---
+	PrintKTX2InfoJSONForNamedFile :: proc(filename: cstring, base_ident: u32, ident_width: u32, minified: c.bool) -> error_code ---
+	PrintKTX2InfoJSONForStream :: proc(stream: ^Stream, base_ident: u32, ident_width: u32, minified: c.bool) -> error_code ---
 
 
 	ErrorString :: proc(error: error_code) -> cstring ---

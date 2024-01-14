@@ -44,10 +44,10 @@ Texture :: struct {
 	vtbl:            ^Texture_vtbl,
 	vvtbl:           rawptr,
 	_protected:      rawptr,
-	isArray:         b32,
-	isCubemap:       b32,
-	isCompressed:    b32,
-	generateMipmaps: b32,
+	isArray:         c.bool,
+	isCubemap:       c.bool,
+	isCompressed:    c.bool,
+	generateMipmaps: c.bool,
 	baseWidth:       u32,
 	baseHeight:      u32,
 	baseDepth:       u32,
@@ -74,7 +74,7 @@ Texture :: struct {
 Texture1 :: struct {
 	using _:              Texture,
 	glFormat:             u32, // Format of the texture data, e.g., GL_RGB. 
-	glInternalformat:     u32, // Internal format of the texture data, e.g., GL_RGB8. 
+	glInternalformat:     u32, // Internal format of the texture data, e.g., GL_RGc.bool. 
 	glBaseInternalformat: u32, // Base format of the texture data, e.g., GL_RGB. 
 	glType:               u32, // Type of the texture data, e.g, GL_UNSIGNED_BYTE. struct ktxTexture1_private* _private; /*!< Private data. 
 }
@@ -91,7 +91,7 @@ Texture2 :: struct {
 	vkFormat:               vk.Format,
 	pDfd:                   [^]u32,
 	supercompressionScheme: SupercmpScheme,
-	isVideo:                b32,
+	isVideo:                c.bool,
 	duration:               u32,
 	timescale:              u32,
 	loopcount:              u32,
@@ -107,7 +107,7 @@ Texture2 :: struct {
  * @sa @ref ktxTexture2::ktxTexture2\_Create() "ktxTexture2_Create()"
  */
 TextureCreateInfo :: struct {
-	glInternalformat: u32, // Internal format for the texture, e.g., GL_RGB8. Ignored when creating a ktxTexture2.
+	glInternalformat: u32, // Internal format for the texture, e.g., GL_RGc.bool. Ignored when creating a ktxTexture2.
 	vkFormat:         vk.Format, // VkFormat for texture. Ignored when creating a ktxTexture1.
 	pDfd:             [^]u32, // Pointer to DFD. Used only when creating a ktxTexture2 and only if vkFormat is VK_FORMAT_UNDEFINED.
 	baseWidth:        u32, // Width of the base level of the texture. 
@@ -117,8 +117,8 @@ TextureCreateInfo :: struct {
 	numLevels:        u32, // Number of mip levels in the texture. Should be 1 if @c generateMipmaps is KTX_TRUE; 
 	numLayers:        u32, // Number of array layers in the texture.
 	numFaces:         u32, // Number of faces: 6 for cube maps, 1 otherwise. 
-	isArray:          b32, // Set to KTX_TRUE if the texture is to be an array texture. Means OpenGL will use a GL_TEXTURE_*_ARRAY target.
-	generateMipmaps:  b32, // Set to KTX_TRUE if mipmaps should be generated for the texture when loading into a 3D API. 
+	isArray:          c.bool, // Set to KTX_TRUE if the texture is to be an array texture. Means OpenGL will use a GL_TEXTURE_*_ARRAY target.
+	generateMipmaps:  c.bool, // Set to KTX_TRUE if mipmaps should be generated for the texture when loading into a 3D API. 
 }
 
 /**
@@ -136,7 +136,7 @@ Stream :: struct {
 	type:            streamType,
 	data:            [3]c.size_t,
 	readpos:         c.size_t, /**< used by FileStream for stdin. */
-	closeOnDestruct: b32, /**< Close FILE* or dispose of memory on destruct. */
+	closeOnDestruct: c.bool, /**< Close FILE* or dispose of memory on destruct. */
 }
 
 
@@ -154,7 +154,7 @@ AstcParams :: struct {
 	/*!< Size of this struct. Used so library can tell which version
              of struct is being passed.
          */
-	verbose:        b32,
+	verbose:        c.bool,
 	/*!< If true, prints Astc encoder operation details to
              @c stdout. Not recommended for GUI apps.
          */
@@ -173,13 +173,13 @@ AstcParams :: struct {
 	qualityLevel:   u32,
 	/*!< astcenc supports -fastest, -fast, -medium, -thorough, -exhaustive
          */
-	normalMap:      b32,
+	normalMap:      c.bool,
 	/*!< Tunes codec parameters for better quality on normal maps
           In this mode normals are compressed to X,Y components
           Discarding Z component, reader will need to generate Z
           component in shaders.
          */
-	perceptual:     b32,
+	perceptual:     c.bool,
 	/*!< The codec should optimize for perceptual error, instead of direct
            RMS error. This aims to improves perceived image quality, but
            typically lowers the measured PSNR score. Perceptual methods are
@@ -214,13 +214,13 @@ BasisParams :: struct {
 	/*!< Size of this struct. Used so library can tell which version
              of struct is being passed.
          */
-	uastc:                            b32,
+	uastc:                            c.bool,
 	/*!<  True to use UASTC base, false to use ETC1S base. */
-	verbose:                          b32,
+	verbose:                          c.bool,
 	/*!< If true, prints Basis Universal encoder operation details to
              @c stdout. Not recommended for GUI apps.
          */
-	noSSE:                            b32,
+	noSSE:                            c.bool,
 	/*!< True to forbid use of the SSE instruction set. Ignored if CPU
              does not support SSE. */
 	threadCount:                      u32,
@@ -276,26 +276,26 @@ BasisParams :: struct {
              are specified ktxTexture_CompressBasisEx will raise
              KTX_INVALID_OPERATION.
          */
-	normalMap:                        b32,
+	normalMap:                        c.bool,
 	/*!< Tunes codec parameters for better quality on normal maps (no
              selector RDO, no endpoint RDO) and sets the texture's DFD appropriately.
              Only valid for linear textures.
          */
-	separateRGToRGB_A:                b32,
+	separateRGToRGB_A:                c.bool,
 	/*!< @deprecated. This was and is a no-op. 2-component inputs have always been
              automatically separated using an "rrrg" inputSwizzle. @sa inputSwizzle and normalMode.
          */
-	preSwizzle:                       b32,
+	preSwizzle:                       c.bool,
 	/*!< If the texture has @c KTXswizzle metadata, apply it before
              compressing. Swizzling, like @c rabb may yield drastically
              different error metrics if done after supercompression.
          */
-	noEndpointRDO:                    b32,
+	noEndpointRDO:                    c.bool,
 	/*!< Disable endpoint rate distortion optimizations. Slightly faster,
              less noisy output, but lower quality per output bit. Default is
              KTX_FALSE.
          */
-	noSelectorRDO:                    b32,
+	noSelectorRDO:                    c.bool,
 	/*!< Disable selector rate distortion optimizations. Slightly faster,
              less noisy output, but lower quality per output bit. Default is
              KTX_FALSE.
@@ -316,7 +316,7 @@ BasisParams :: struct {
                 KTX_PACK_UASTC_LEVEL_SLOWER  | 48.01dB
                 KTX_PACK_UASTC_LEVEL_VERYSLOW | 48.24dB
          */
-	uastcRDO:                         b32,
+	uastcRDO:                         c.bool,
 	/*!< Enable Rate Distortion Optimization (RDO) post-processing.
          */
 	uastcRDOQualityScalar:            f32,
@@ -339,10 +339,10 @@ BasisParams :: struct {
              [.01,65536.0]. Default is 18.0. Larger values expand the range of
              blocks considered smooth.
          */
-	uastcRDODontFavorSimplerModes:    b32,
+	uastcRDODontFavorSimplerModes:    c.bool,
 	/*!< Do not favor simpler UASTC modes in RDO mode.
          */
-	uastcRDONoMultithreading:         b32,
+	uastcRDONoMultithreading:         c.bool,
 	/*!< Disable RDO multithreading (slightly higher compression,
              deterministic).
          */
