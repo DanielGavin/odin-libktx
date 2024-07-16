@@ -120,6 +120,16 @@ Texture_WriteToStream :: proc(This: ^Texture, dststr: ^Stream) -> error_code {
 	return This.vtbl.WriteToStream(This, dststr)
 }
 
+Texture_GetImageOffset :: proc(
+	This: ^Texture,
+	level: u32,
+	layer: u32,
+	faceSlice: u32,
+	pOffset: ^c.size_t,
+) -> error_code {
+	return This.vtbl.GetImageOffset(This, level, layer, faceSlice, pOffset)
+}
+
 VulkanTexture_subAllocatorAllocMemFuncPtr :: proc "c" (
 	allocInfo: ^vk.MemoryAllocateInfo,
 	memReg: ^vk.MemoryRequirements,
@@ -249,38 +259,36 @@ foreign ktx {
 
 
 create_vulkan_functions :: proc() -> VulkanFunctions {
-	return(
-		VulkanFunctions {
-			vkGetInstanceProcAddr = vk.GetInstanceProcAddr,
-			vkGetDeviceProcAddr = vk.GetDeviceProcAddr,
-			vkAllocateCommandBuffers = vk.AllocateCommandBuffers,
-			vkAllocateMemory = vk.AllocateMemory,
-			vkBeginCommandBuffer = vk.BeginCommandBuffer,
-			vkBindBufferMemory = vk.BindBufferMemory,
-			vkBindImageMemory = vk.BindImageMemory,
-			vkCmdBlitImage = vk.CmdBlitImage,
-			vkCmdCopyBufferToImage = vk.CmdCopyBufferToImage,
-			vkCmdPipelineBarrier = vk.CmdPipelineBarrier,
-			vkCreateImage = vk.CreateImage,
-			vkDestroyImage = vk.DestroyImage,
-			vkCreateBuffer = vk.CreateBuffer,
-			vkDestroyBuffer = vk.DestroyBuffer,
-			vkCreateFence = vk.CreateFence,
-			vkDestroyFence = vk.DestroyFence,
-			vkEndCommandBuffer = vk.EndCommandBuffer,
-			vkFreeCommandBuffers = vk.FreeCommandBuffers,
-			vkFreeMemory = vk.FreeMemory,
-			vkGetBufferMemoryRequirements = vk.GetBufferMemoryRequirements,
-			vkGetImageMemoryRequirements = vk.GetImageMemoryRequirements,
-			vkGetImageSubresourceLayout = vk.GetImageSubresourceLayout,
-			vkGetPhysicalDeviceImageFormatProperties = vk.GetPhysicalDeviceImageFormatProperties,
-			vkGetPhysicalDeviceFormatProperties = vk.GetPhysicalDeviceFormatProperties,
-			vkGetPhysicalDeviceMemoryProperties = vk.GetPhysicalDeviceMemoryProperties,
-			vkMapMemory = vk.MapMemory,
-			vkQueueSubmit = vk.QueueSubmit,
-			vkQueueWaitIdle = vk.QueueWaitIdle,
-			vkUnmapMemory = vk.UnmapMemory,
-			vkWaitForFences = vk.WaitForFences,
-		} \
-	)
+	return (VulkanFunctions {
+				vkGetInstanceProcAddr = vk.GetInstanceProcAddr,
+				vkGetDeviceProcAddr = vk.GetDeviceProcAddr,
+				vkAllocateCommandBuffers = vk.AllocateCommandBuffers,
+				vkAllocateMemory = vk.AllocateMemory,
+				vkBeginCommandBuffer = vk.BeginCommandBuffer,
+				vkBindBufferMemory = vk.BindBufferMemory,
+				vkBindImageMemory = vk.BindImageMemory,
+				vkCmdBlitImage = vk.CmdBlitImage,
+				vkCmdCopyBufferToImage = vk.CmdCopyBufferToImage,
+				vkCmdPipelineBarrier = vk.CmdPipelineBarrier,
+				vkCreateImage = vk.CreateImage,
+				vkDestroyImage = vk.DestroyImage,
+				vkCreateBuffer = vk.CreateBuffer,
+				vkDestroyBuffer = vk.DestroyBuffer,
+				vkCreateFence = vk.CreateFence,
+				vkDestroyFence = vk.DestroyFence,
+				vkEndCommandBuffer = vk.EndCommandBuffer,
+				vkFreeCommandBuffers = vk.FreeCommandBuffers,
+				vkFreeMemory = vk.FreeMemory,
+				vkGetBufferMemoryRequirements = vk.GetBufferMemoryRequirements,
+				vkGetImageMemoryRequirements = vk.GetImageMemoryRequirements,
+				vkGetImageSubresourceLayout = vk.GetImageSubresourceLayout,
+				vkGetPhysicalDeviceImageFormatProperties = vk.GetPhysicalDeviceImageFormatProperties,
+				vkGetPhysicalDeviceFormatProperties = vk.GetPhysicalDeviceFormatProperties,
+				vkGetPhysicalDeviceMemoryProperties = vk.GetPhysicalDeviceMemoryProperties,
+				vkMapMemory = vk.MapMemory,
+				vkQueueSubmit = vk.QueueSubmit,
+				vkQueueWaitIdle = vk.QueueWaitIdle,
+				vkUnmapMemory = vk.UnmapMemory,
+				vkWaitForFences = vk.WaitForFences,
+			})
 }
