@@ -55,7 +55,7 @@ PFNKTXITERCB :: proc "c" (
 	faceLodSize: u64,
 	pixels: rawptr,
 	userdata: rawptr,
-)
+) -> error_code
 
 PFNKTEXSETIMAGEFROMMEMORY :: proc "c" (
 	This: ^Texture,
@@ -118,6 +118,18 @@ Texture_WriteToMemory :: proc(This: ^Texture, bytes: ^[^]u8, size: ^c.size_t) ->
 
 Texture_WriteToStream :: proc(This: ^Texture, dststr: ^Stream) -> error_code {
 	return This.vtbl.WriteToStream(This, dststr)
+}
+
+Texture_GetDataSizeUncompressed :: proc(This: ^Texture) -> c.size_t {
+	return This.vtbl.GetDataSizeUncompressed(This)
+}
+
+Texture_LoadImageData :: proc(This: ^Texture, pBuffer: [^]u8, bufSize: c.size_t) -> error_code {
+	return This.vtbl.LoadImageData(This, pBuffer, bufSize)
+}
+
+Texture_IterateLevels :: proc(This: ^Texture, iterCb: PFNKTXITERCB, userdata: rawptr) -> error_code {
+	return This.vtbl.IterateLevels(This, iterCb, userdata)
 }
 
 Texture_GetImageOffset :: proc(
